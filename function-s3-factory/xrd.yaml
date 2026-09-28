@@ -1,0 +1,49 @@
+# CompositeResourceDefinition (XRD)
+# Defines a new resource type "S3Bucket" that developers can request,
+# and the inputs it accepts (name, environment, team, enableVersioning).
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xs3buckets.test-karthik
+spec:
+  group: test-karthik
+  names:
+    kind: XS3Bucket
+    plural: xs3buckets
+  claimNames:
+    kind: S3Bucket
+    plural: s3buckets
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              required:
+                - name
+                - environment
+                - team
+              properties:
+                name:
+                  type: string
+                  description: "Base name for the S3 bucket (suffixed with environment)"
+                  minLength: 3
+                  maxLength: 40
+                environment:
+                  type: string
+                  description: "Target environment"
+                  enum:
+                    - dev
+                    - beta
+                    - prod
+                team:
+                  type: string
+                  description: "Owning team name (used for tagging and access control)"
+                  minLength: 2
+                enableVersioning:
+                  type: boolean
+                  description: "Override: force-enable versioning even in dev"
